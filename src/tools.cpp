@@ -4,6 +4,8 @@
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
+using std::cout;
+using std::endl;
 
 Tools::Tools() {}
 
@@ -43,7 +45,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	//pre-compute a set of terms to avoid repeated calculation
 	float c1 = px*px+py*py;
 	float c2 = sqrt(c1);
-	float c3 = (c1*c2);           // it may be further optimized for:
+	float c3 = (c1*c2);
+  // it may be further optimized for:
   // (px*vy -py*vx)/c3, as they appears twice
   // px/c2, py/c2
 
