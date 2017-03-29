@@ -36,8 +36,21 @@ FusionEKF::FusionEKF() {
     * Finish initializing the FusionEKF.
     * Set the process and measurement noises
   */
+  // initializing ekf_
+  VectorXd x_in(4);
+  MatrixXd P_in(4, 4);
+	P_in << 1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1000, 0,
+    0, 0, 0, 1000;
 
+  MatrixXd F_in(4, 4); // It's value is function of delta t
+  MatrixXd Q_in(4, 4); // It's value is function of delta t
 
+  MatrixXd H_in; // to be instantiated according to measurement type
+  MatrixXd R_in; // to be instantiated according to measurement type
+
+  ekf_.Init(x_in, P_in, F_in, H_in, R_in, Q_in);
 }
 
 /**
@@ -46,7 +59,6 @@ FusionEKF::FusionEKF() {
 FusionEKF::~FusionEKF() {}
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
-
 
   /*****************************************************************************
    *  Initialization
@@ -66,12 +78,17 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
+      project the polar coordinates onto x, and y,
+      to add the cosine, and sine of rho below
       */
+      ekf_.x_ << measurement_pack.raw_measurements_[0],
+        measurement_pack.raw_measurements_[1];
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       /**
       Initialize state.
       */
+      ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1];
     }
 
     // done initializing, no need to predict or update
