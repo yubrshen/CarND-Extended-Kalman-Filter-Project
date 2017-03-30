@@ -22,6 +22,11 @@ public:
   virtual ~FusionEKF();
 
   /**
+   * check is the measurement is of acceptable quality
+   */
+  bool GoodMeasurement(const MeasurementPackage &measurement_pack);
+
+  /**
   * Run the whole flow of the Kalman Filter from here.
   */
   void ProcessMeasurement(const MeasurementPackage &measurement_pack);
