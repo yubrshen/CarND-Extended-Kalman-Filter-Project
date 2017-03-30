@@ -50,6 +50,15 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 	//check division by zero
 	if((fabs(c1) < 0.0001) || (fabs(c3) < 0.0001)){
 		cout << "CalculateJacobian () - Error - Division by Zero" << endl;
+    // When fabs(c1), or fabs(c3) is very small, it's rho, the distance between the sensors to the
+    // object very small, the angle phi, and change rate of the distance rho_dot may be hard to tell
+    // but we need to have Hj well behaved computationally.
+    // Following value is borrowed from
+    // https://discussions.udacity.com/t/action-on-divide-by-zero-in-jacobian/229082/2
+    Hj <<
+      0,    0,    0, 0,
+      1e+9, 1e+9, 0, 0,
+      0,    0,    0, 0;
 		return Hj;
 	}
 
@@ -64,4 +73,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     py*(-c4), px*c4,   c5, c6;
 
 	return Hj;
+}
+
+float Tools::SquaredDistance(const float& px, const float& py) {
+  return px*px + py*py;
 }

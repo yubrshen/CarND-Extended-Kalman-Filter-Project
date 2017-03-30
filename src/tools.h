@@ -25,6 +25,10 @@ public:
   */
   Eigen::MatrixXd CalculateJacobian(const Eigen::VectorXd& x_state);
 
+  /**
+   * A helper method to compute common squared distance
+   */
+  float SquaredDistance(const float& px, const float& py);
 };
 
 #endif /* TOOLS_H_ */
