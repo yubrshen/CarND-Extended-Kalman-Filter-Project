@@ -22,7 +22,7 @@ public:
   virtual ~FusionEKF();
 
   /**
-   * check is the measurement is of acceptable quality
+   * check if the measurement is of acceptable quality
    */
   bool GoodMeasurement(const MeasurementPackage &measurement_pack);
 
