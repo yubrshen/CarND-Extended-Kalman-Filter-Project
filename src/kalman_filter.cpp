@@ -55,10 +55,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   // VectorXd z_pred = H_ * x_;
 
   // The following code compute y by the accurate but nonlinear equation:
-  VectorXd z_pred(2);
+  VectorXd z_pred(3);
+
+  float c1 = x_[0]*x_[0] + x_[1]*x_[1];
+  float c2 = x_[0]*x_[2] + x_[1]*x_[3];
+  float c3 = 0;
+  if (0.0001 < fabs(c1)) {
+    c3 = c2/c1;
+  }
 
   z_pred <<
-    sqrt(x_[0]*x_[0] + x_[1]*x_[1]), atan2(x_[1], x_[0]);
+    sqrt(c1), atan2(x_[1], x_[0]), c2/c1;
 
   VectorXd y = z - z_pred;
 
