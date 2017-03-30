@@ -38,6 +38,10 @@ private:
   // previous timestamp
   long previous_timestamp_;
 
+  // for Q matrix:
+  float noise_ax = 9;
+  float noise_ay = 9;
+
   // tool object used to compute Jacobian and RMSE
   Tools tools;
   Eigen::MatrixXd R_laser_;
