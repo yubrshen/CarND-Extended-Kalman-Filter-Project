@@ -64,7 +64,7 @@ VectorXd state_comparable_to_measurement(const VectorXd& state, const MatrixXd& 
   float c1 = sqrt(px*px + py*py);
   float c2 = px*vx + py*vy;
 
-  float c3 = 0; // the default used if c1 is too small. It should be OK,
+  float c3 = 0; // the default used, if c1 is too small. It should be OK,
   // as when c1 is small, the c3, the rate of change of rho (rho_dot)
   // can be assumed to be very small.
   if (0.0001 < fabs(c1)) {
