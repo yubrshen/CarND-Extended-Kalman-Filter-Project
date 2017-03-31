@@ -53,6 +53,11 @@ public:
   void Predict();
 
   /**
+   * The common logic refactored out from between KalmanFilter and EKF
+   */
+  void UpdateMeta(const Eigen::VectorXd &z, const Eigen::VectorXd &y);
+
+  /**
    * Updates the state by using standard Kalman Filter equations
    * @param z The measurement at k+1
    */
