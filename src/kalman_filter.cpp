@@ -47,26 +47,36 @@ void KalmanFilter::Update(const VectorXd &z) {
   P_ = (I - K * H_) * P_;
 }
 
+VectorXd state_comparable_to_measurement(const VectorXd& state, const MatrixXd& H) {
+  // convert state to the form and value comparable to external measurement in the case of RADAR measurement
+
+  // The following code computes y by the accurate but nonlinear equation:
+  VectorXd z_pred(3);
+  float px = state[0];
+  float py = state[1];
+  float vx = state[2];
+  float vy = state[3];
+
+  float c1 = sqrt(px*px + py*py);
+  float c2 = px*vx + py*vy;
+
+  float c3 = 0; // the default used if c1 is too small. It should be OK,
+  // as when c1 is small, the c3, the rate of change of rho (rho_dot)
+  // can be assumed to be very small.
+  if (0.0001 < fabs(c1)) {
+    c3 = c2/c1;
+  }
+  z_pred <<
+    c1, atan2(py, px), c3;
+  return z_pred;
+}
+
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
   DONE:
     * update the state by using Extended Kalman Filter equations
   */
-  // VectorXd z_pred = H_ * x_;
-
-  // The following code compute y by the accurate but nonlinear equation:
-  VectorXd z_pred(3);
-
-  float c1 = x_[0]*x_[0] + x_[1]*x_[1];
-  float c2 = x_[0]*x_[2] + x_[1]*x_[3];
-  float c3 = 0;
-  if (0.0001 < fabs(c1)) {
-    c3 = c2/c1;
-  }
-
-  z_pred <<
-    sqrt(c1), atan2(x_[1], x_[0]), c2/c1;
-
+  VectorXd z_pred = state_comparable_to_measurement(x_, H_);
   VectorXd y = z - z_pred;
 
   // Begin adjust y[1]
