@@ -84,10 +84,8 @@ int main(int argc, char* argv[]) {
       // read measurements at this timestamp
       meas_package.sensor_type_ = MeasurementPackage::LASER;
       meas_package.raw_measurements_ = VectorXd(2);
-      float x;
-      float y;
-      iss >> x;
-      iss >> y;
+      float x; float y;
+      iss >> x; iss >> y;
       meas_package.raw_measurements_ << x, y;
       iss >> timestamp;
       meas_package.timestamp_ = timestamp;
@@ -98,12 +96,8 @@ int main(int argc, char* argv[]) {
       // read measurements at this timestamp
       meas_package.sensor_type_ = MeasurementPackage::RADAR;
       meas_package.raw_measurements_ = VectorXd(3);
-      float ro;
-      float phi;
-      float ro_dot;
-      iss >> ro;
-      iss >> phi;
-      iss >> ro_dot;
+      float ro; float phi; float ro_dot;
+      iss >> ro; iss >> phi; iss >> ro_dot;
       meas_package.raw_measurements_ << ro, phi, ro_dot;
       iss >> timestamp;
       meas_package.timestamp_ = timestamp;
@@ -111,14 +105,8 @@ int main(int argc, char* argv[]) {
     }
 
     // read ground truth data to compare later
-    float x_gt;
-    float y_gt;
-    float vx_gt;
-    float vy_gt;
-    iss >> x_gt;
-    iss >> y_gt;
-    iss >> vx_gt;
-    iss >> vy_gt;
+    float x_gt; float y_gt; float vx_gt; float vy_gt;
+    iss >> x_gt; iss >> y_gt; iss >> vx_gt; iss >> vy_gt;
     gt_package.gt_values_ = VectorXd(4);
     gt_package.gt_values_ << x_gt, y_gt, vx_gt, vy_gt;
     gt_pack_list.push_back(gt_package);
@@ -136,7 +124,7 @@ int main(int argc, char* argv[]) {
   for (size_t k = 0; k < N; ++k) {
     // start filtering from the second frame (the speed is unknown in the first
     // frame)
-    if (fusionEKF.GoodMeasurement(measurement_pack_list[k])) {
+    if (fusionEKF.GoodMeasurement(measurement_pack_list[k])) { // only good measurement helps the tracking
       fusionEKF.ProcessMeasurement(measurement_pack_list[k]);
 
       // output the estimation
@@ -171,7 +159,14 @@ int main(int argc, char* argv[]) {
 
   // compute the accuracy (RMSE)
   Tools tools;
-  cout << "Accuracy - RMSE:" << endl << tools.CalculateRMSE(estimations, ground_truth) << endl;
+  VectorXd rmse = tools.CalculateRMSE(estimations, ground_truth);
+  // make sure RMSE components are below the maximum of the expected:
+  assert(rmse[0] < 0.2);
+  assert(rmse[1] < 0.2);
+  assert(rmse[2] < 0.6);
+  assert(rmse[3] < 0.85);
+
+  cout << "Accuracy - RMSE:" << endl << rmse << endl;
 
   // close files
   if (out_file_.is_open()) {
