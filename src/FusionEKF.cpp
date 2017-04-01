@@ -81,6 +81,10 @@ FusionEKF::FusionEKF() {
 */
 FusionEKF::~FusionEKF() {}
 
+inline float SquaredDistance(const float& px, const float& py) {
+  return px*px + py*py;
+}
+
 bool FusionEKF::GoodMeasurement(const MeasurementPackage &measurement_pack) {
   switch (measurement_pack.sensor_type_) {
   case MeasurementPackage::RADAR:
@@ -89,7 +93,7 @@ bool FusionEKF::GoodMeasurement(const MeasurementPackage &measurement_pack) {
     }
     break;
   case MeasurementPackage::LASER:
-    if (0.0001 < tools.SquaredDistance(measurement_pack.raw_measurements_[0],
+    if (0.0001 < SquaredDistance(measurement_pack.raw_measurements_[0],
                                        measurement_pack.raw_measurements_[1])) {
       return true;
     }

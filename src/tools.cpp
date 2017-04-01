@@ -74,7 +74,3 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
 	return Hj;
 }
-
-float Tools::SquaredDistance(const float& px, const float& py) {
-  return px*px + py*py;
-}
